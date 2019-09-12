@@ -23,6 +23,11 @@ const init = () => {
     isPlaying = !isPlaying;
     updatePlayPauseButtonLabel();
   });
+
+  document.body.addEventListener("mousemove", (e) => {
+    cursor.style.left = e.pageX + 'px';
+    cursor.style.top = e.pageY - cursor.height + 'px';
+  });
 };
 
 init();

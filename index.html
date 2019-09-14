@@ -3,7 +3,6 @@
   <head>
     <style type="text/css">
       body {
-        background: black;
         cursor: none;
       }
     </style>
@@ -11,7 +10,12 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <img id="cursor" alt="" src="paint_cursor.png" style="pointer-events:none; position:absolute;"/>
+    <img
+      id="cursor"
+      alt=""
+      src="paint_cursor.png"
+      style="pointer-events:none; position:absolute; user-select: none;"
+    />
     <footer>
       <button id="play_pause_button"></button>
     </footer>

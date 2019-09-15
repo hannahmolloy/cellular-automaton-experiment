@@ -9,7 +9,7 @@ let ctx;
  */
 let width;
 /**
- * @ty[e number
+ * @type number
  */
 let height;
 
@@ -33,21 +33,27 @@ export const init = (canvasElement, canvasWidth, canvasHeight) => {
   Object.assign(canvasElement.style, {
     width: canvasWidth + "px",
     height: canvasHeight + "px",
-    border: "1px solid blue", // for testing
-    background: "blue" // for testing
+    border: "1px solid black", // for testing
+    background: "black" // for testing
   });
+
+  ctx.scale(4, 4);
 };
 
 /**
  * @param {number} x
  * @param {number} y
  */
-const drawPixelAt = (x, y) => {};
+const drawPixelAt = (x, y) => {
+  ctx.fillRect(x, y, 1, 1);
+};
 
 /**
  * Clear the whole canvas
  */
-const clear = () => {};
+const clear = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
 
 /**
  * @param {number[]} row

@@ -2,6 +2,7 @@
 
 import { drawImage, init as initCanvas } from "./canvas.js";
 import Point from "./point.js";
+import State from "./state.js";
 
 const $ = s => document.getElementById(s);
 
@@ -10,55 +11,6 @@ const cursor = $("cursor");
 const playPauseButton = $("play_pause_button");
 
 let isPlaying = false;
-
-/**
- * @type {{[string]: Point}}
- */
-let state = {};
-
-const updatePlayPauseButtonLabel = () => {
-  if (isPlaying === true) {
-    playPauseButton.innerText = "Pause";
-  } else {
-    playPauseButton.innerText = "Play";
-  }
-};
-
-/**
- *
- * @param {{[string]: Point}} st
- * @param {Point} point
- * @returns {{[string]: Point}}
- */
-const addToState = (st, point) => {
-  st[`${point.x}-${point.y}`] = point;
-  return st;
-};
-
-/**
- * @param {number} x
- * @param {number} y
- */
-const onCanvasClicked = (x, y) => {
-  addToState(state, new Point(x, y));
-  render();
-};
-
-const init = () => {
-  updatePlayPauseButtonLabel();
-
-  playPauseButton.addEventListener("click", () => {
-    isPlaying = !isPlaying;
-    updatePlayPauseButtonLabel();
-  });
-
-  document.body.addEventListener("mousemove", e => {
-    cursor.style.left = e.pageX + "px";
-    cursor.style.top = e.pageY - cursor.height + "px";
-  });
-
-  initCanvas(canvas, 400, 400, onCanvasClicked);
-};
 
 /**
  * @param {number[][]} rowsMap
@@ -78,27 +30,66 @@ const getPointsFromRowsMap = rowsMap => {
     .flat();
 };
 
-const toDict = (...points) => {
-  return points.reduce(addToState, {});
-};
+const samplePoints = getPointsFromRowsMap([
+  [0, 0, 1, 0, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 0, 1, 0, 0],
+  [1, 0, 0, 0, 1, 0, 0, 0, 1],
+  [1, 0, 0, 0, 1, 0, 0, 0, 1],
+  [0, 1, 0, 0, 0, 0, 0, 1, 0],
+  [0, 0, 1, 1, 1, 1, 1, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0]
+]).map(point => point.move(15, 15));
 
-state = toDict(
-  ...getPointsFromRowsMap([
-    [0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [1, 0, 0, 0, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 1],
-    [0, 1, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 1, 1, 1, 1, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ]).map(point => point.move(15, 15))
+const state = new State(
+  !!localStorage.getItem("state")
+    ? JSON.parse(localStorage.getItem("state"))
+    : samplePoints
 );
 
-const render = () => {
-  drawImage(Object.values(state));
+const updatePlayPauseButtonLabel = () => {
+  if (isPlaying === true) {
+    playPauseButton.innerText = "Pause";
+  } else {
+    playPauseButton.innerText = "Play";
+  }
 };
+
+/**
+ * @param {number} x
+ * @param {number} y
+ */
+const onCanvasClicked = (x, y) => {
+  state.toggle(x, y);
+  render();
+};
+
+const init = () => {
+  updatePlayPauseButtonLabel();
+
+  playPauseButton.addEventListener("click", () => {
+    isPlaying = !isPlaying;
+    updatePlayPauseButtonLabel();
+  });
+
+  document.body.addEventListener("mousemove", e => {
+    cursor.style.left = e.pageX + "px";
+    cursor.style.top = e.pageY - cursor.height + "px";
+  });
+
+  initCanvas(canvas, 400, 400, onCanvasClicked);
+};
+
+const render = () => {
+  drawImage(state.toList());
+};
+
+window.state = state;
+
+state.subscribeToChanges(newState => {
+  localStorage.setItem("state", JSON.stringify(newState.toList()));
+});
 
 init();
 render();

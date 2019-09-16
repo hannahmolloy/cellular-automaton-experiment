@@ -56,8 +56,6 @@ export const init = (canvasElement, canvasWidth, canvasHeight, onClick) => {
     border: "1px solid black", // for testing
     background: "black" // for testing
   });
-
-  ctx.scale(4, 4);
 };
 
 /**

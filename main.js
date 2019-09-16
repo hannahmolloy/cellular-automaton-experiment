@@ -73,9 +73,10 @@ const init = () => {
     updatePlayPauseButtonLabel();
   });
 
+  const offset = 4;
   document.body.addEventListener("mousemove", e => {
-    cursor.style.left = e.pageX + "px";
-    cursor.style.top = e.pageY - cursor.height + "px";
+    cursor.style.left = e.pageX - offset + "px";
+    cursor.style.top = e.pageY - cursor.height + offset + "px";
   });
 
   initCanvas(canvas, 400, 400, onCanvasClicked);

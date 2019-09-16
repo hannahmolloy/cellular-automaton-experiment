@@ -11,12 +11,37 @@ const playPauseButton = $("play_pause_button");
 
 let isPlaying = false;
 
+/**
+ * @type {{[string]: Point}}
+ */
+let state = {};
+
 const updatePlayPauseButtonLabel = () => {
   if (isPlaying === true) {
     playPauseButton.innerText = "Pause";
   } else {
     playPauseButton.innerText = "Play";
   }
+};
+
+/**
+ *
+ * @param {{[string]: Point}} st
+ * @param {Point} point
+ * @returns {{[string]: Point}}
+ */
+const addToState = (st, point) => {
+  st[`${point.x}-${point.y}`] = point;
+  return st;
+};
+
+/**
+ * @param {number} x
+ * @param {number} y
+ */
+const onCanvasClicked = (x, y) => {
+  addToState(state, new Point(x, y));
+  render();
 };
 
 const init = () => {
@@ -32,7 +57,7 @@ const init = () => {
     cursor.style.top = e.pageY - cursor.height + "px";
   });
 
-  initCanvas(canvas, 400, 400);
+  initCanvas(canvas, 400, 400, onCanvasClicked);
 };
 
 /**
@@ -53,34 +78,27 @@ const getPointsFromRowsMap = rowsMap => {
     .flat();
 };
 
+const toDict = (...points) => {
+  return points.reduce(addToState, {});
+};
+
+state = toDict(
+  ...getPointsFromRowsMap([
+    [0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [1, 0, 0, 0, 1, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 1, 1, 1, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ]).map(point => point.move(15, 15))
+);
+
+const render = () => {
+  drawImage(Object.values(state));
+};
+
 init();
-
-/**
- * Zero means a pixel that should be empty,
- * One means a pixel that should be coloured.
- */
-const diamond = getPointsFromRowsMap([
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 1, 0, 0, 0],
-  [0, 0, 1, 1, 1, 0, 0],
-  [0, 1, 1, 1, 1, 1, 0],
-  [1, 1, 1, 1, 1, 1, 1],
-  [0, 1, 1, 1, 1, 1, 0],
-  [0, 0, 1, 1, 1, 0, 0],
-  [0, 0, 0, 1, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0]
-]);
-
-const smileyFace = getPointsFromRowsMap([
-  [0, 0, 1, 0, 0, 0, 1, 0, 0],
-  [0, 0, 1, 0, 0, 0, 1, 0, 0],
-  [0, 0, 1, 0, 0, 0, 1, 0, 0],
-  [0, 0, 1, 0, 0, 0, 1, 0, 0],
-  [1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [1, 0, 0, 0, 1, 0, 0, 0, 1],
-  [0, 1, 0, 0, 0, 0, 0, 1, 0],
-  [0, 0, 1, 1, 1, 1, 1, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0]
-]).map(point => point.move(15, 15));
-
-drawImage(smileyFace);
+render();

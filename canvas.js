@@ -13,15 +13,35 @@ let width;
  */
 let height;
 
+const scaleFactor = 10;
+
+const scaled = n => n * scaleFactor;
+const unscaled = n => Math.floor(n / scaleFactor);
+
+let onCanvasClicked;
+
+const fallbackClickHandler = (x, y) => {
+  console.log(
+    `The canvas was clicked at [${x}, ${y}] but you haven't supplied a callback handler`
+  );
+};
+
 /**
  * @param {HTMLCanvasElement} canvasElement
  * @param {number} canvasWidth
  * @param {number} canvasHeight
+ * @param {Function} onClick
  */
-export const init = (canvasElement, canvasWidth, canvasHeight) => {
+export const init = (canvasElement, canvasWidth, canvasHeight, onClick) => {
   ctx = canvasElement.getContext("2d");
   width = canvasWidth;
   height = canvasHeight;
+
+  onCanvasClicked = onClick || fallbackClickHandler;
+
+  canvasElement.addEventListener("click", e => {
+    onCanvasClicked(unscaled(e.offsetX), unscaled(e.offsetY));
+  });
 
   /**
    * Set the canvas size to the initialised values.
@@ -45,7 +65,7 @@ export const init = (canvasElement, canvasWidth, canvasHeight) => {
  * @param {number} y
  */
 const drawPixelAt = (x, y) => {
-  ctx.fillRect(x, y, 1, 1);
+  ctx.fillRect(scaled(x), scaled(y), scaled(1), scaled(1));
 };
 
 /**
@@ -56,21 +76,16 @@ const clear = () => {
 };
 
 /**
- * @param {number[]} row
- * @param {number} rowIndex
+ * @param {Point} point
  */
-const drawRow = (row, rowIndex) => {
-  row.forEach((value, colIndex) => {
-    if (value === 1) {
-      drawPixelAt(colIndex, rowIndex);
-    }
-  });
+const drawPoint = point => {
+  drawPixelAt(point.x, point.y);
 };
 
 /**
- * @param {number[][]} rows
+ * @param {Point[]} points
  */
-export const drawImage = rows => {
+export const drawImage = points => {
   clear();
 
   /**
@@ -78,5 +93,5 @@ export const drawImage = rows => {
    */
   ctx.fillStyle = "#FFFFFF";
 
-  rows.forEach(drawRow);
+  points.forEach(drawPoint);
 };

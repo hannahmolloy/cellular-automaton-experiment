@@ -1,15 +1,5 @@
 import Point from "./point.js";
-
-/**
- *
- * @param {{[string]: Point}} st
- * @param {Point} point
- * @returns {{[string]: Point}}
- */
-const addToState = (st, point) => {
-  st[`${point.x}-${point.y}`] = point;
-  return st;
-};
+import { toDict, addToState } from "./utils.js";
 
 export default class State {
   /**
@@ -23,10 +13,6 @@ export default class State {
    * @param {Point[]} initialPoints
    */
   constructor(initialPoints) {
-    const toDict = (...points) => {
-      return points.reduce(addToState, {});
-    };
-
     this.points = toDict(...initialPoints);
   }
 

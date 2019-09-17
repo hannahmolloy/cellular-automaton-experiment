@@ -91,5 +91,6 @@ export const drawImage = points => {
    */
   ctx.fillStyle = "#FFFFFF";
 
+  console.log(points);
   points.forEach(drawPoint);
 };

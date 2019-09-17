@@ -3,6 +3,7 @@
 import { drawImage, init as initCanvas } from "./canvas.js";
 import Point from "./point.js";
 import State from "./state.js";
+import Board from "./conway.js";
 
 const $ = s => document.getElementById(s);
 
@@ -88,9 +89,26 @@ const render = () => {
 
 window.state = state;
 
+window.xx = new Board(40, 40, state.toList());
+
+window.zz = () => {
+  drawImage(window.xx.toList());
+};
+
+window.go = () => {
+  window.xx.step();
+  zz();
+};
+
 state.subscribeToChanges(newState => {
   localStorage.setItem("state", JSON.stringify(newState.toList()));
 });
 
 init();
 render();
+
+setInterval(() => {
+  if (isPlaying) {
+    window.go();
+  }
+}, 333);

@@ -8,6 +8,8 @@ export default class Board {
    */
   points = {};
 
+  listeners = [];
+
   rows = 0;
   cols = 0;
 
@@ -15,6 +17,15 @@ export default class Board {
     this.points = toDict(...initialPoints);
     this.rows = boardWidth;
     this.cols = boardHeight;
+  }
+
+  toggle(x, y) {
+    if (this.has(x, y)) {
+      delete this.points[`${x}-${y}`];
+    } else {
+      Object.assign(this.points, toDict(new Point(x, y)));
+    }
+    this.notifyListeners();
   }
 
   /**
@@ -121,5 +132,13 @@ export default class Board {
    */
   toList() {
     return Object.values(this.points);
+  }
+
+  notifyListeners() {
+    this.listeners.forEach(l => l(this));
+  }
+
+  subscribeToChanges(handler) {
+    this.listeners.push(handler);
   }
 }

@@ -55,7 +55,6 @@ export const init = (canvasElement, canvasWidth, canvasHeight, onClick) => {
       onCanvasClicked(unscaled(e.offsetX), unscaled(e.offsetY));
       startX = unscaled(e.offsetX);
       startY = unscaled(e.offsetY);
-      console.log(unscaled(e.offsetX) + " " + unscaled(e.offsetY));
     }
   });
 

@@ -36,11 +36,31 @@ export const init = (canvasElement, canvasWidth, canvasHeight, onClick) => {
   ctx = canvasElement.getContext("2d");
   width = canvasWidth;
   height = canvasHeight;
+  let mouseClicked = false;
+  let startX;
+  let startY;
 
   onCanvasClicked = onClick || fallbackClickHandler;
 
   canvasElement.addEventListener("click", e => {
     onCanvasClicked(unscaled(e.offsetX), unscaled(e.offsetY));
+  });
+
+  canvasElement.addEventListener("mousedown", e => {
+    mouseClicked = true;
+  });
+
+  canvasElement.addEventListener("mousemove", e => {
+    if (mouseClicked && (startX != unscaled(e.offsetX) || startY != unscaled(e.offsetY))) {
+      onCanvasClicked(unscaled(e.offsetX), unscaled(e.offsetY));
+      startX = unscaled(e.offsetX);
+      startY = unscaled(e.offsetY);
+      console.log(unscaled(e.offsetX) + " " + unscaled(e.offsetY));
+    }
+  });
+
+  canvasElement.addEventListener("mouseup", e => {
+    mouseClicked = false;
   });
 
   /**

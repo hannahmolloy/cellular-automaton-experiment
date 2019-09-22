@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Cool Stuff</title>
     <style type="text/css">
       body {
-        cursor: none;
+        margin: 0;
+      }
+      #canvas {
+        cursor: url("./paint_cursor.png") 5 20, auto;
       }
     </style>
     <script defer type="module" src="main.js"></script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
-    <img
-      id="cursor"
-      alt=""
-      src="paint_cursor.png"
-      style="pointer-events:none; position:absolute; user-select: none;"
-    />
     <footer>
       <button id="play_pause_button"></button>
     </footer>
